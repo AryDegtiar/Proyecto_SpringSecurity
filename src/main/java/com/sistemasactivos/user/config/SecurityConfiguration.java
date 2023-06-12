@@ -1,6 +1,5 @@
 package com.sistemasactivos.user.config;
 
-import com.sistemasactivos.user.service.UserDetailServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
-import static javax.management.Query.and;
-
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -32,18 +29,18 @@ public class SecurityConfiguration {
         jwtAuthenticationFilter.setAuthenticationManager(authManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/login");
 
-        return http
-                .csrf().disable()
-                .authorizeRequests()
-                .anyRequest()//put, get, post, delete
-                .authenticated()
-                .and()
-                .sessionManagement() //nuevo
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)//nuevo
+        http.csrf().disable()
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").hasRole("USER")
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(jwtAuthenticationFilter)
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
     @Bean

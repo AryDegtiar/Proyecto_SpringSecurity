@@ -2,12 +2,13 @@ package com.sistemasactivos.user.service;
 
 import com.sistemasactivos.user.model.User;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.List;
 
 // Se implementan los métodos de UserDetails de la dependencia
 // de Spring Security para obtener los datos del usuario
@@ -18,7 +19,14 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        // Obtener los roles y permisos del usuario y convertirlos en instancias de GrantedAuthority
+
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                .collect(Collectors.toList());
+
+        return authorities;
     }
 
     @Override
@@ -32,7 +40,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
     @Override
     public boolean isAccountNonLocked() {
@@ -49,5 +59,7 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    public String getName(){ return user.getName(); }
+    public String getName() {
+        return user.getName();
+    }
 }

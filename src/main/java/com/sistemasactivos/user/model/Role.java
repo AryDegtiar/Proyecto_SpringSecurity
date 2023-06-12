@@ -4,8 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,15 +16,14 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "User")
-public class User extends Base {
-
+@Table(name = "Role")
+public class Role extends Base{
     private String name;
-    private String email;
-    private String password;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+    private Set<Permission> permissions;
 
 }
-

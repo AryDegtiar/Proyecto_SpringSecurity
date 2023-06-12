@@ -1,11 +1,8 @@
 package com.sistemasactivos.user.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,15 +15,11 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "User")
-public class User extends Base {
+@Table(name = "Permission")
+public class Permission extends Base{
 
     private String name;
-    private String email;
-    private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "permissions")
     private Set<Role> roles;
-
 }
-
