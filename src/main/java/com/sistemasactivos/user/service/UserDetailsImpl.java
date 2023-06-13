@@ -1,13 +1,16 @@
 package com.sistemasactivos.user.service;
 
+import com.sistemasactivos.user.model.Role;
 import com.sistemasactivos.user.model.User;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 // Se implementan los métodos de UserDetails de la dependencia
 // de Spring Security para obtener los datos del usuario
@@ -18,7 +21,13 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Set<Role> roles = user.getRoles();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for (Role role : roles)
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+
+        return authorities;
     }
 
     @Override
